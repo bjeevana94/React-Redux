@@ -2,27 +2,63 @@ import React from 'react';
 //import logo from './logo.svg';
 import './App.css';
 
-var arrPlayers = [
-  {
-    name: "Jim Hoskins",
-    score: 30,
-    id: 1
-  },
-  {
-    name: "Jeevana Bommannagari",
-    score: 35,
-    id: 2
-  },
-  {
-    name: "Big Boss",
-    score: 21,
-    id:3
-  }
-]
+function Stats(props){
+  var length = props.splayers.length;
+  var totalcount = props.splayers.reduce(function(total,player){
+      return total+player.score;
+  },0)
+  return(
+    <table className ="stats">
+      <tbody>
+        <tr>
+          <td>Players</td>
+          <td>{length}</td>
+        </tr>
+        <tr>
+          <td>Score Count</td>
+          <td>{totalcount}</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+var AddPlayerForm = React.createClass({
+    getInitialState : function(){
+      return {
+        name : " ",
+      }
+    },
+
+    onchange : function(e){
+      console.log(this.state.name)
+      this.setState({name : e.target.value})
+    },
+
+    onsubmit : function(e){
+      e.preventDefault();
+      this.props.onAdd(this.state.name);
+      this.setState({name: " "})
+    },
+
+    render: function(){
+      return (
+          <div className = "add-player-form">
+          <form onSubmit = {this.onsubmit}>
+            <input type = "text" value = {this.state.name} onChange = {this.onchange}/>
+            <input type = "submit" value= "Add Player"/>
+          </form>
+          </div>
+      );
+    }
+    
+
+});
 
 function Header(props){
   return (
       <div className = "header">
+          <Stats splayers = {props.players}/>
           <h1> {props.title}</h1>
       </div>
     );
@@ -35,17 +71,14 @@ Header.propTypes = {
 function Player(props){
   return (
       <div>
-            {props.players.map(function(player){
-              return(
-                <div className = "player" key = {player.id}>
-                  <div className = "player-name">
-                    {player.name} 
-                  </div> 
-                  <Counter initial = {player.score}/> 
-                </div>
-              );           
-            })}
-    </div>
+       <div className = "player">
+        <div className = "player-name">
+          <a className = "remove-player" onClick = {props.onremove}> x </a>
+              {props.name} 
+        </div> 
+        <Counter score = {props.score} onChange = {props.onScoreChange}/>     
+        </div>   
+      </div>
   );
 }
 
@@ -57,47 +90,65 @@ Player.propTypes = {
   })).isRequired,
 }
 
-var Counter = React.createClass({
-  propTypes: {
-    initial : React.PropTypes.number.isRequired,
+
+function Counter(props){
+  return (
+    <div className = "player-score">
+        <div className = "counter">
+          <button className = "counter-action decrement" onClick ={function(){props.onChange(-1);}}> - </button>
+          <div className= "counter-score"> {props.score} </div>
+          <button className = "counter-action increment" onClick ={function(){props.onChange(1);}}> + </button>
+        </div>
+    </div>
+  );
+}
+
+var nextId = 4;
+var App = React.createClass({
+
+  getInitialState : function(){
+    return {
+      players : this.props.initalPlayers,
+    }
   },
 
-  getInitialState: function(){
-      return {
-        score : this.props.initial,
-      }
-  },
-  increment: function(){
-    this.setState({score: (this.state.score+1)})
+  onScoreChange : function(index,delta){
+    console.log(index,delta);
+    this.state.players[index].score += delta;
+    this.setState(this.state)
   },
 
-  decrement: function(){
-    this.setState({score: (this.state.score-1)})
+  addNewPlayer : function(name){
+      this.state.players.push({
+        name : name,
+        score: 0,
+        id: nextId
+      });
+      nextId += 1;
+      this.setState(this.state)
+  },
+
+  removePlayer: function(index){
+    this.state.players.splice(index,1);
+    this.setState(this.state)
   },
 
   render: function(){
     return (
-    <div className = "player-score">
-        <div className = "counter">
-          <button className = "counter-action decrement" onClick={this.decrement}> - </button>
-          <div className= "counter-score"> {this.state.score} </div>
-          <button className = "counter-action increment" onClick={this.increment}> + </button>
-        </div>
-    </div>
-  );
-  }
+      <div className="scoreboard">
+        <Header title = "score board" players={this.state.players}/>
+            {this.state.players.map(function(player,index)
+              {
+                return ( 
+                  <Player name = {player.name} score = {player.score} key = {player.id}
+                  onremove = {function(){this.removePlayer(index)}.bind(this)} 
+                  onScoreChange = {function(delta){this.onScoreChange(index,delta)}.bind(this)}/>
+                );
+              }.bind(this))}
+        <AddPlayerForm onAdd ={this.addNewPlayer}/>
+      </div>
+    );
+  },
 });
-
-
-function App(){
-  return (
-    <div className="scoreboard">
-        <Header title = "score board" />
-        <Player players = {arrPlayers}/>
-     </div>
-    
-  );
-}
-
 
 export default App;
