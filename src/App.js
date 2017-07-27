@@ -51,8 +51,68 @@ var AddPlayerForm = React.createClass({
           </div>
       );
     }
-    
+});
 
+var StopWatch = React.createClass({
+  getInitialState : function(){
+    return {
+      running : false,
+      displayTime : 0,
+      previousTime : 0,
+    }
+  },
+
+  componentDidMount: function(){
+    this.interval = setInterval(this.onTick,100);
+  },
+
+  ComponentWillUnmount : function(){
+    clearInterval(this.interval)
+  },
+
+  onTick : function(){
+    if(this.state.running){
+      var now = Date.now();
+      this.setState({
+        displayTime : (this.state.displayTime + (now - this.state.previousTime)),
+        previousTime : now
+      })
+    }
+  },
+
+  onStart : function(){
+    this.setState({
+      running: true,
+      previousTime : Date.now(),
+      
+    })
+  },
+
+  onStop : function(){
+    this.setState({running: false})
+  },
+
+  onReset : function(){
+    this.setState({
+      displayTime : 0,
+      previousTime : Date.now()
+    })
+  },
+
+  render: function(){
+    var buttonstate = this.state.running ? 
+                      <button onClick = {this.onStop}>Stop</button> 
+                      : <button onClick = {this.onStart}>Start</button>
+    var second = Math.floor(this.state.displayTime / 1000);
+    return (
+      <div className ="stopwatch">
+        <h2>Stopwatch</h2>
+        <div className = "stopwatch-score">{second}</div>
+        {buttonstate}
+        <button onClick = {this.onReset}>Reset</button>
+      </div>
+      );
+   }
 });
 
 function Header(props){
@@ -60,6 +120,7 @@ function Header(props){
       <div className = "header">
           <Stats splayers = {props.players}/>
           <h1> {props.title}</h1>
+          <StopWatch/>
       </div>
     );
 }
