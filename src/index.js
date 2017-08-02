@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import Scoreboard from './containers/Scoreboard';
 import registerServiceWorker from './registerServiceWorker';
 
 var arrPlayers = [
@@ -22,5 +22,5 @@ var arrPlayers = [
   }
 ]
 
-ReactDOM.render(<App initalPlayers = {arrPlayers}/>, document.getElementById('container'));
+ReactDOM.render(<Scoreboard initalPlayers = {arrPlayers}/>, document.getElementById('container'));
 registerServiceWorker();

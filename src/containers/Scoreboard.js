@@ -1,27 +1,9 @@
 import React from 'react';
-//import logo from './logo.svg';
-import './App.css';
-
-function Stats(props){
-  var length = props.splayers.length;
-  var totalcount = props.splayers.reduce(function(total,player){
-      return total+player.score;
-  },0)
-  return(
-    <table className ="stats">
-      <tbody>
-        <tr>
-          <td>Players</td>
-          <td>{length}</td>
-        </tr>
-        <tr>
-          <td>Score Count</td>
-          <td>{totalcount}</td>
-        </tr>
-      </tbody>
-    </table>
-  );
-}
+import ReactDOM from "react-dom"
+import '../App.css';
+import Stopwatch from '../components/Stopwatch';
+import Counter from '../components/Counter';
+import Stats from '../components/Stats';
 
 var AddPlayerForm = React.createClass({
     getInitialState : function(){
@@ -53,74 +35,12 @@ var AddPlayerForm = React.createClass({
     }
 });
 
-var StopWatch = React.createClass({
-  getInitialState : function(){
-    return {
-      running : false,
-      displayTime : 0,
-      previousTime : 0,
-    }
-  },
-
-  componentDidMount: function(){
-    this.interval = setInterval(this.onTick,100);
-  },
-
-  ComponentWillUnmount : function(){
-    clearInterval(this.interval)
-  },
-
-  onTick : function(){
-    if(this.state.running){
-      var now = Date.now();
-      this.setState({
-        displayTime : (this.state.displayTime + (now - this.state.previousTime)),
-        previousTime : now
-      })
-    }
-  },
-
-  onStart : function(){
-    this.setState({
-      running: true,
-      previousTime : Date.now(),
-      
-    })
-  },
-
-  onStop : function(){
-    this.setState({running: false})
-  },
-
-  onReset : function(){
-    this.setState({
-      displayTime : 0,
-      previousTime : Date.now()
-    })
-  },
-
-  render: function(){
-    var buttonstate = this.state.running ? 
-                      <button onClick = {this.onStop}>Stop</button> 
-                      : <button onClick = {this.onStart}>Start</button>
-    var second = Math.floor(this.state.displayTime / 1000);
-    return (
-      <div className ="stopwatch">
-        <h2>Stopwatch</h2>
-        <div className = "stopwatch-score">{second}</div>
-        {buttonstate}
-        <button onClick = {this.onReset}>Reset</button>
-      </div>
-      );
-   }
-});
-
 function Header(props){
   return (
       <div className = "header">
           <Stats splayers = {props.players}/>
           <h1> {props.title}</h1>
-          <StopWatch/>
+          <Stopwatch/>
       </div>
     );
 }
@@ -152,20 +72,9 @@ Player.propTypes = {
 }
 
 
-function Counter(props){
-  return (
-    <div className = "player-score">
-        <div className = "counter">
-          <button className = "counter-action decrement" onClick ={function(){props.onChange(-1);}}> - </button>
-          <div className= "counter-score"> {props.score} </div>
-          <button className = "counter-action increment" onClick ={function(){props.onChange(1);}}> + </button>
-        </div>
-    </div>
-  );
-}
 
 var nextId = 4;
-var App = React.createClass({
+var Scoreboard = React.createClass({
 
   getInitialState : function(){
     return {
@@ -212,4 +121,4 @@ var App = React.createClass({
   },
 });
 
-export default App;
+export default Scoreboard;
