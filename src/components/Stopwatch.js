@@ -1,8 +1,8 @@
-import React, {Component, Prototypes} from 'react';
+import React, {Component, PropTypes} from 'react';
 
 
 class Stopwatch extends React.Component{
-  
+
   state = {
       running: false,
       previouseTime: 0,
