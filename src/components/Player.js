@@ -6,21 +6,15 @@ const Player = props => {
       <div>
        <div className = "player">
         <div className = "player-name">
-          <a className = "remove-player" onClick = {props.onremove}> x </a>
+          <a className = "remove-player" onClick = {() => props.onremove(props.index) }> x </a>
               {props.name} 
         </div> 
-        <Counter score = {props.score} onChange = {props.onScoreChange}/>     
+        <Counter index = {props.index} score = {props.score} onScoreChange = {props.onScoreChange}/>     
         </div>   
       </div>
   );
 }
 
-Player.propTypes = {
-  players: React.PropTypes.arrayOf(React.PropTypes.shape({
-    name : React.PropTypes.string.isRequired,
-    score : React.PropTypes.number.isRequired,
-    id: React.PropTypes.number.isRequired,
-  })).isRequired,
-}
+
 
 export default Player;
